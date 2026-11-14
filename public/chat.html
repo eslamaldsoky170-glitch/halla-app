@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حلّها - مساعدك الذكي</title>
+    <!-- هنا بنربط ملف التصميم اللي عملناه -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- شريط العنوان -->
+        <header>تطبيق "حلّها" 🤖</header>
+        
+        <!-- صندوق الرسائل -->
+        <div id="chat-box">
+            <div class="msg bot">أهلاً بك! أنا مساعدك الذكي، اسألني أي حاجة.</div>
+        </div>
+
+        <!-- مربع الكتابة -->
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="اكتب سؤالك هنا...">
+            <button id="btn">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('btn').addEventListener('click', async function() {
+        var input = document.getElementById('user-input');
+        var chatBox = document.getElementById('chat-box');
+        var text = input.value;
+
+        if (!text) return;
+
+        // إضافة رسالة المستخدم
+        chatBox.innerHTML += '<div class="msg user">' + text + '</div>';
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // مؤشر التحميل
+        var loadingId = 'loading-' + Date.now();
+        chatBox.innerHTML += '<div class="msg bot" id="' + loadingId + '">جاري التفكير... ⏳</div>';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            var response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            var data = await response.json();
+            
+            // مسح التحميل وإضافة الرد
+            document.getElementById(loadingId).remove();
+            
+            // تجهيز الرسالة النصية
+            var botMessage = '<div class="msg bot">' + data.reply;
+            
+            // لو فيه صورة جاية من السيرفر، نضيفها
+            if (data.image) {
+                botMessage += '<br><img src="' + data.image + '" alt="صورة" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">';
+            }
+            
+            botMessage += '</div>';
+            chatBox.innerHTML += botMessage;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+        } catch (error) {
+            document.getElementById(loadingId).innerText = "معلش، السيرفر مش متاح دلوقتي.";
+        }
+    });
+</script>
+</body>
+</html>

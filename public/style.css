@@ -1,0 +1,90 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #343541; /* لون خلفية غامق زي ChatGPT */
+    color: white;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 800px; /* عرض ثابت في النص */
+    height: 90vh;
+    background-color: #444654;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+header {
+    background-color: #202123;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#chat-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.msg {
+    max-width: 85%;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.user {
+    background-color: #343541;
+    align-self: flex-end;
+    border: 1px solid #565869;
+}
+
+.bot {
+    background-color: #444654;
+    align-self: flex-start;
+}
+
+.input-group {
+    display: flex;
+    padding: 15px;
+    background-color: #40414f;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #565869;
+    background: #40414f;
+    color: white;
+    font-size: 1rem;
+}
+
+button {
+    padding: 15px 25px;
+    background-color: #19c37d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1a885d;
+}
