@@ -4,37 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حلّها - مساعدك الذكي</title>
-    <link rel="stylesheet" href="style.css">
     
+    <!-- عشان نمنع خطأ الأيقونة -->
+    <link rel="icon" href="data:,">
+
+    <!-- استدعاء خط كايرو -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- ربط ملف التصميم -->
+    <link rel="stylesheet" href="css/style.css?v=10">
+    
+    <!-- مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- مكتبة تنسيق النصوص -->
+    <script src="https://unpkg.com/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo">تطبيق "حلّها" 🤖</div>
-            <button id="new-chat-btn" class="new-chat-btn">+ محادثة جديدة</button>
+            <div class="logo-container">
+                <!-- الشعار -->
+                <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f2fe;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M9 18h6"></path>
+                    <path d="M10 22h4"></path>
+                    <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+                    <circle cx="12" cy="9" r="2" fill="url(#grad1)"></circle>
+                </svg>
+                <span class="logo-text">حلّها</span>
+            </div>
             
-            <div class="history-list" id="history-list"></div>
-
+            <button id="menu-drawer-btn" class="new-chat-btn" type="button">☰ المحادثات</button>
+            <div id="chats-drawer" class="side-chats-panel" style="display: none;">
+                <div class="side-chats-header">
+                    <span>المحادثات</span>
+                    <button id="close-drawer-btn" type="button title="إغلاق">×</button>
+                </div>
+            <button id="new-chat-btn" class="new-chat-btn" type="button">+ محادثة جديدة</button>
+            <div id="history-list" class="history-list"></div>
+        </div>
+            
+            <!-- قسم اختيار الأوضاع -->
+            <div class="modes-section"> 
+                <p class="section-title">اختر شخصية المساعد:</p>
+                <div class="modes-grid">
+                    <button class="mode-btn active" data-mode="general">
+                        <span>🌐</span> مساعد عام
+                    </button>
+                    <button class="mode-btn" data-mode="career">
+                        <span>💼</span> مدرب التوظيف
+                    </button>
+                    <button class="mode-btn" data-mode="learning">
+                        <span>🎓</span> مستشار التعلم
+                    </button>
+                </div>
+            </div>
+            
             <div class="user-profile">
                 <div id="user-info" style="display: none; text-align: center; margin-bottom: 10px;">
-                    <img id="user-photo" src="" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-bottom: 5px;">
-                    <div id="user-name" style="font-size: 14px; color: #ccc;"></div>
+                    <img id="user-photo" src="" alt="Profile" style="width: 45px; height: 45px; border-radius: 50%; margin-bottom: 5px; border: 2px solid #4facfe;">
+                    <div id="user-name" style="font-size: 14px; color: #eee; font-weight: 600;"></div>
                 </div>
                 <button id="login-btn" class="login-btn">تسجيل الدخول بجوجل</button>
-                <button id="logout-btn" class="login-btn" style="display: none; background-color: #e74c3c; margin-top: 5px;">تسجيل الخروج</button>
+                <button id="logout-btn" class="login-btn" style="display: none; background: transparent; border: 1px solid #ff4757; color: #ff4757; margin-top: 5px;">تسجيل الخروج</button>
             </div>
         </aside>
 
         <main class="chat-area">
             <div id="chat-box">
-                <div class="msg bot">أهلاً بك! أنا مساعدك الذكي، اختر محادثة أو ابدأ محادثة جديدة.</div>
+                <div class="welcome-screen">
+                    <h1 class="welcome-title">كيف يمكنني مساعدتك اليوم؟</h1>
+                    <div class="msg bot">أهلاً بك! أنا مساعدك الذكي "حلّها". اختر محادثة أو ابدأ محادثة جديدة.</div>
+                </div>
             </div>
             
-            <div id="typing-indicator">جاري التفكير... ⏳</div>
+            <div id="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
 
             <div class="input-group">
                 <button id="mic-btn" title="تسجيل صوتي">🎤</button>
@@ -44,254 +98,7 @@
         </main>
     </div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAwxoUFenT4HunNCfQWxWCrUCaBB7dlde8",
-            authDomain: "halla-app-8b4dd.firebaseapp.com",
-            projectId: "halla-app-8b4dd",
-            storageBucket: "halla-app-8b4dd.firebasestorage.app",
-            messagingSenderId: "509081270409",
-            appId: "1:509081270409:web:d8410b9a56412dd62d2e58"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const db = firebase.firestore(); 
-
-        let currentUser = null; 
-        let currentChatId = null; 
-        let unsubscribeMessages = null; 
-        let currentMessages = []; // المصفوفة اللي هتحفظ السياق
-
-        // تسجيل الدخول
-        document.getElementById('login-btn').addEventListener('click', () => {
-            auth.signInWithPopup(provider).catch((error) => alert("خطأ: " + error.message));
-        });
-        document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
-
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('logout-btn').style.display = 'block';
-                document.getElementById('user-info').style.display = 'block';
-                document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/40';
-                document.getElementById('user-name').innerText = user.displayName || 'مستخدم';
-                
-                loadUserChats(); 
-                document.getElementById('chat-box').innerHTML = '<div class="msg bot">أهلاً بك! اختر محادثة من القائمة أو ابدأ محادثة جديدة.</div>';
-                } else {
-                currentUser = null;
-                document.getElementById('login-btn').style.display = 'block';
-                document.getElementById('logout-btn').style.display = 'none';
-                document.getElementById('user-info').style.display = 'none';
-                document.getElementById('history-list').innerHTML = '';
-                document.getElementById('chat-box').innerHTML = '<div class="msg bot">أهلاً بك! سجل دخولك لحفظ محادثاتك.</div>';
-            }
-        });
-
-        document.getElementById('new-chat-btn').addEventListener('click', async function() {
-            if(!currentUser) return alert("سجل دخولك الأول!");
-            const docRef = await db.collection('users').doc(currentUser.uid).collection('chats').add({
-                title: "محادثة جديدة",
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            loadMessages(docRef.id); 
-            loadUserChats(); 
-        });
-
-        function loadUserChats() {
-            if (!currentUser) return;
-            const historyList = document.getElementById('history-list');
-            
-            db.collection('users').doc(currentUser.uid).collection('chats')
-                .orderBy('createdAt', 'desc')
-                .onSnapshot((snapshot) => { 
-                    historyList.innerHTML = '';
-                    if(snapshot.empty) {
-                        historyList.innerHTML = '<p style="color: #888; font-size: 12px; text-align: center; margin-top: 20px;">لا توجد محادثات</p>';
-                        return;
-                    }
-                    snapshot.forEach((doc) => {
-                        const chatData = doc.data();
-                        const chatItem = document.createElement('div');
-                        chatItem.className = 'chat-history-item';
-                        if(doc.id === currentChatId) chatItem.style.backgroundColor = '#2a2b32'; 
-                        chatItem.innerText = chatData.title || 'محادثة';
-                        chatItem.onclick = () => loadMessages(doc.id);
-                        historyList.appendChild(chatItem);
-                    });
-                });
-        }
-
-        function loadMessages(chatId) {
-            currentChatId = chatId;
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = '<div class="msg bot">جاري تحميل الرسائل...</div>'; 
-
-            if (unsubscribeMessages) unsubscribeMessages();
-
-            unsubscribeMessages = db.collection('users').doc(currentUser.uid).collection('chats').doc(chatId).collection('messages')
-                .orderBy('timestamp', 'asc')
-                .onSnapshot((snapshot) => {
-                    chatBox.innerHTML = '';
-                    currentMessages = []; // تصفير الذاكرة عند فتح شات جديد
-
-                    if(snapshot.empty) {
-                        chatBox.innerHTML = '<div class="msg bot">المحادثة فاضية. ابدأ الكلام!</div>';
-                    }
-                    snapshot.forEach((doc) => {
-                        const msg = doc.data();
-                        
-                        // بنحفظ الرسالة في الذاكرة عشان نبعتلها
-                        currentMessages.push({ sender: msg.sender, text: msg.text });
-
-                        let formattedText = marked.parse(msg.text);
-                        
-                        if (msg.sender === 'user') {
-                            chatBox.innerHTML += '<div class="msg user">' + formattedText + '</div>';
-                        } else {
-                            let botHtml = '<div class="msg bot">' + formattedText;
-                            if (msg.image) {
-                                botHtml += '<br><img src="' + msg.image + '" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">';
-                                botHtml += '<br><button onclick="downloadImage(\'' + msg.image + '\')" class="download-btn">تحميل الصورة ⬇️</button>';
-                            }
-                            botHtml += '<button class="speak-btn" onclick="speakText(this)">🔊 استماع</button></div>';
-                            chatBox.innerHTML += botHtml;
-                        }
-                    });
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                });
-        }
-
-        async function sendMessage() {
-            var input = document.getElementById('user-input');
-            var chatBox = document.getElementById('chat-box');
-            var typingIndicator = document.getElementById('typing-indicator');
-            var text = input.value;
-
-            if (!text || !currentUser) return;
-            
-            if (!currentChatId) {
-                const docRef = await db.collection('users').doc(currentUser.uid).collection('chats').add({
-                    title: "محادثة جديدة",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                currentChatId = docRef.id;
-                loadMessages(currentChatId);
-            }
-
-            input.value = '';
-
-            db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).collection('messages').add({
-                text: text,
-                sender: 'user',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            typingIndicator.style.display = 'block';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                // هنا بنبعت السؤال + الذاكرة (تاريخ الرسايل)
-                var response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: text,
-                        history: currentMessages // <--- دي السر بتاع السياق
-                    })
-                });
-                var data = await response.json();
-                
-                typingIndicator.style.display = 'none';
-                
-                db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).collection('messages').add({
-                    text: data.reply,
-                    image: data.image || null,
-                    sender: 'bot',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).get().then(doc => {
-                    if(doc.data().title === "محادثة جديدة") {
-                        db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).update({
-                            title: text.substring(0, 20) + "..." 
-                        });
-                    }
-                });
-
-            } catch (error) {
-                typingIndicator.style.display = 'none';
-                chatBox.innerHTML += '<div class="msg bot">معلش، السيرفر مش متاح دلوقتي.</div>';
-            }
-        }
-
-        document.getElementById('btn').addEventListener('click', sendMessage);
-        document.getElementById('user-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        async function downloadImage(imageUrl) {
-            try {
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'halla-image.jpg';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                alert('المتصفح منع التحميل. جرب كليك يمين وحفظ الصورة.');
-            }
-        }
-
-        function speakText(btn) {
-            window.speechSynthesis.cancel();
-            let msgDiv = btn.parentElement;
-            let textToSpeak = msgDiv.innerText.replace('🔊 استماع', '').replace('تحميل الصورة ⬇️', '').trim();
-            let utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'ar-SA'; 
-            window.speechSynthesis.speak(utterance);
-        }
-
-        const micBtn = document.getElementById('mic-btn');
-        const userInput = document.getElementById('user-input');
-        
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'ar-EG'; 
-            recognition.interimResults = false;
-
-            micBtn.addEventListener('click', () => {
-                recognition.start();
-                micBtn.style.backgroundColor = '#e74c3c'; 
-                micBtn.innerText = '🔴';
-            });
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
-                sendMessage(); 
-            };
-
-            recognition.onend = () => {
-                micBtn.style.backgroundColor = '#40414f'; 
-                micBtn.innerText = '🎤';
-            };
-            
-            recognition.onerror = () => {
-                micBtn.style.backgroundColor = '#40414f';
-                micBtn.innerText = '🎤';
-            };
-        } else {
-            micBtn.style.display = 'none'; 
-        }
-    </script>
+    <!-- ربط ملف الجافاسكريبت (الرابط ده مهم جداً عشان نمنع الكاش) -->
+    <script src="js/app.js"></script>
 </body>
 </html>
