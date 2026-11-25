@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // تفعيل قراءة الـ JSON
 app.use(express.json());
@@ -25,6 +25,10 @@ const errorHandler = require('./src/middlewares/errorHandler');
 app.use(errorHandler);
 
 // تشغيل السيرفر
-app.listen(port, () => {
-    console.log("Server is running on http://localhost:3000");
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log("Server is running on: http://localhost:3000");
+    });
+}
+
+module.exports = app;
