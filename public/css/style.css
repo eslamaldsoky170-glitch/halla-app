@@ -504,94 +504,110 @@ button#mic-btn:hover {
     }
 }
 /* =========================================
-   تظبيط الشكل للموبايل (نفس الترتيب بس أصغر)
+   تظبيط الشكل للموبايل (نفس الترتيب بس أصغر واحترافي)
    ========================================= */
 @media (max-width: 768px) {
-    .app-container {
-        flex-direction: row; /* نحافظ على الترتيب (شمال ويمين) */
+    body, html {
+        height: 100dvh; /* سر الموبايل: بيعرف يحسب طول الشاشة الحقيقي */
+        overflow: hidden;
     }
 
+    .app-container {
+        flex-direction: row;
+        height: 100dvh;
+    }
+
+    /* تصغير القائمة الجانبية لأقصى درجة */
     .sidebar {
-        width: 90px; /* تصغير عرض القائمة عشان الشات ياخد مساحة */
+        width: 65px; 
         padding: 5px;
         border-left: 1px solid var(--glass-border);
+        flex-shrink: 0;
     }
 
     .logo-container {
-        flex-direction: column; /* الشعار فوق بعضه */
-        gap: 5px;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
+        flex-direction: column;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
     }
 
     .logo-svg { width: 25px; height: 25px; }
-    .logo-text { font-size: 0.9rem; }
+    .logo-text { display: none; } /* نخفي الاسم عشان المساحة */
 
     .new-chat-btn {
-        font-size: 0.7rem;
-        padding: 8px 2px;
-        text-align: center;
+        font-size: 0; /* نخفي الكلام */
+        padding: 8px 0;
+        display: flex;
+        justify-content: center;
+    }
+    .new-chat-btn::before {
+        content: "+"; /* نحط زائد بس */
+        font-size: 1.5rem;
     }
 
-    .section-title {
-        font-size: 0.6rem;
-        text-align: center;
-        margin: 5px 0;
-    }
+    .section-title, .history-title { display: none; } /* نخفي العناوين */
 
     .modes-section {
-        padding: 5px;
-        background: transparent; /* نشيل الخلفية عشان منزحمش الشكل */
+        padding: 0;
+        background: transparent;
         border: none;
+        margin-top: 10px;
     }
 
     .modes-grid {
-        flex-direction: column;
-        gap: 5px;
+        gap: 8px;
     }
 
     .mode-btn {
-        flex-direction: column; /* الأيقونة فوق والكلام تحت */
-        gap: 2px;
-        padding: 8px 2px;
-        font-size: 0.6rem;
-        text-align: center;
+        flex-direction: column;
+        padding: 8px 0;
         justify-content: center;
+        font-size: 0; /* نخفي الكلام */
     }
-    
+
     .mode-btn span {
-        font-size: 1.2rem; /* نكبر الأيقونة شوية */
+        font-size: 1.3rem; /* نظهر الأيقونة بس */
     }
 
     /* قسم المستخدم */
     .user-profile {
         padding-top: 10px;
+        margin-top: auto; /* يخليه ينزل تحت خالص */
     }
 
     #user-info {
         display: flex !important;
         flex-direction: column;
         align-items: center;
-        margin-bottom: 5px !important;
+        gap: 5px;
+        margin-bottom: 10px !important;
     }
 
     #user-photo { width: 30px !important; height: 30px !important; }
-    #user-name { font-size: 0.6rem; text-align: center; }
+    #user-name { display: none; } /* نخفي الاسم */
     
     .login-btn { 
         font-size: 0.6rem; 
-        padding: 5px; 
+        padding: 10px 2px; 
+        writing-mode: vertical-rl; /* نخلي الكلام بالطول عشان ميزحمش */
+        text-orientation: mixed;
+        height: 90px;
         border-radius: 5px;
     }
 
-    /* منطقة الشات (بتاخد باقي الشاشة) */
+    /* منطقة الشات */
     .chat-area {
-        width: calc(100% - 90px); /* العرض كله ما عدا القائمة */
+        width: calc(100% - 65px); /* العرض كله ما عدا القائمة */
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
     }
 
     #chat-box {
+        flex: 1;
         padding: 10px;
         gap: 10px;
+        overflow-y: auto;
     }
 
     .msg {
@@ -600,31 +616,30 @@ button#mic-btn:hover {
         font-size: 0.85rem;
     }
 
-    /* شريط الإرسال */
+    /* شريط الإرسال (أهم حاجة) */
     .input-group {
-        padding: 10px 5px;
+        display: flex !important; /* نجبره يظهر */
+        padding: 8px;
         gap: 5px;
-        margin-bottom: 5px;
+        margin-bottom: 0;
+        background: var(--bg-dark);
+        border-top: 1px solid var(--glass-border);
+        flex-shrink: 0; /* يمنع اختفاءه */
     }
 
     input {
         padding: 10px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        min-width: 0; /* مهم جداً عشان ميدفعش الأزرار بره */
     }
 
     button#btn {
         padding: 10px 15px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     button#mic-btn {
         padding: 8px;
         font-size: 1rem;
-    }
-    
-    /* تصغير رسالة الترحيب */
-    .welcome-title {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
     }
 }
