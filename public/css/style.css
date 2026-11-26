@@ -503,143 +503,19 @@ button#mic-btn:hover {
         top: 70px;
     }
 }
-/* =========================================
-   تظبيط الشكل للموبايل (نفس الترتيب بس أصغر واحترافي)
-   ========================================= */
-@media (max-width: 768px) {
-    body, html {
-        height: 100dvh; /* سر الموبايل: بيعرف يحسب طول الشاشة الحقيقي */
-        overflow: hidden;
-    }
+#upload-btn {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .app-container {
-        flex-direction: row;
-        height: 100dvh;
-    }
-
-    /* تصغير القائمة الجانبية لأقصى درجة */
-    .sidebar {
-        width: 65px; 
-        padding: 5px;
-        border-left: 1px solid var(--glass-border);
-        flex-shrink: 0;
-    }
-
-    .logo-container {
-        flex-direction: column;
-        margin-bottom: 5px;
-        padding-bottom: 5px;
-    }
-
-    .logo-svg { width: 25px; height: 25px; }
-    .logo-text { display: none; } /* نخفي الاسم عشان المساحة */
-
-    .new-chat-btn {
-        font-size: 0; /* نخفي الكلام */
-        padding: 8px 0;
-        display: flex;
-        justify-content: center;
-    }
-    .new-chat-btn::before {
-        content: "+"; /* نحط زائد بس */
-        font-size: 1.5rem;
-    }
-
-    .section-title, .history-title { display: none; } /* نخفي العناوين */
-
-    .modes-section {
-        padding: 0;
-        background: transparent;
-        border: none;
-        margin-top: 10px;
-    }
-
-    .modes-grid {
-        gap: 8px;
-    }
-
-    .mode-btn {
-        flex-direction: column;
-        padding: 8px 0;
-        justify-content: center;
-        font-size: 0; /* نخفي الكلام */
-    }
-
-    .mode-btn span {
-        font-size: 1.3rem; /* نظهر الأيقونة بس */
-    }
-
-    /* قسم المستخدم */
-    .user-profile {
-        padding-top: 10px;
-        margin-top: auto; /* يخليه ينزل تحت خالص */
-    }
-
-    #user-info {
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        margin-bottom: 10px !important;
-    }
-
-    #user-photo { width: 30px !important; height: 30px !important; }
-    #user-name { display: none; } /* نخفي الاسم */
-    
-    .login-btn { 
-        font-size: 0.6rem; 
-        padding: 10px 2px; 
-        writing-mode: vertical-rl; /* نخلي الكلام بالطول عشان ميزحمش */
-        text-orientation: mixed;
-        height: 90px;
-        border-radius: 5px;
-    }
-
-    /* منطقة الشات */
-    .chat-area {
-        width: calc(100% - 65px); /* العرض كله ما عدا القائمة */
-        display: flex;
-        flex-direction: column;
-        height: 100dvh;
-    }
-
-    #chat-box {
-        flex: 1;
-        padding: 10px;
-        gap: 10px;
-        overflow-y: auto;
-    }
-
-    .msg {
-        max-width: 95%;
-        padding: 10px;
-        font-size: 0.85rem;
-    }
-
-    /* شريط الإرسال (أهم حاجة) */
-    .input-group {
-        display: flex !important; /* نجبره يظهر */
-        padding: 8px;
-        gap: 5px;
-        margin-bottom: 0;
-        background: var(--bg-dark);
-        border-top: 1px solid var(--glass-border);
-        flex-shrink: 0; /* يمنع اختفاءه */
-    }
-
-    input {
-        padding: 10px;
-        font-size: 0.9rem;
-        min-width: 0; /* مهم جداً عشان ميدفعش الأزرار بره */
-    }
-
-    button#btn {
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-
-    button#mic-btn {
-        padding: 8px;
-        font-size: 1rem;
-    }
+#upload-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
 }

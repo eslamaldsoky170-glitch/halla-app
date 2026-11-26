@@ -21,6 +21,7 @@
     
     <!-- مكتبة تنسيق النصوص -->
     <script src="https://unpkg.com/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -46,7 +47,7 @@
             <div id="chats-drawer" class="side-chats-panel" style="display: none;">
                 <div class="side-chats-header">
                     <span>المحادثات</span>
-                    <button id="close-drawer-btn" type="button title="إغلاق">×</button>
+                    <button id="close-drawer-btn" type="button" title="إغلاق">×</button>
                 </div>
             <button id="new-chat-btn" class="new-chat-btn" type="button">+ محادثة جديدة</button>
             <div id="history-list" class="history-list"></div>
@@ -90,11 +91,15 @@
                 <span></span><span></span><span></span>
             </div>
 
-            <div class="input-group">
-                <button id="mic-btn" title="تسجيل صوتي">🎤</button>
-                <input type="text" id="user-input" placeholder="اكتب سؤالك هنا...">
-                <button id="btn">إرسال</button>
-            </div>
+           <div class="input-group">
+    <!-- زرار رفع الملفات -->
+    <input type="file" id="file-upload" accept=".pdf" style="display: none;">
+    <button id="upload-btn" title="ارفع سيرتك الذاتية">🖇️</button>
+    
+    <button id="mic-btn" title="تسجيل صوتي">🎤</button>
+    <input type="text" id="user-input" placeholder="اكتب سؤالك هنا...">
+    <button id="btn">إرسال</button>
+</div>
         </main>
     </div>
 

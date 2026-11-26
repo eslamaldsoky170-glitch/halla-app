@@ -442,3 +442,118 @@ if (!window.__hallaPdfDelegationBound) {
         }
     });
 }
+// ==========================================
+// 7. ميزة تحليل السيرة الذاتية (CV Analyzer)
+// ==========================================
+const uploadBtn = document.getElementById('upload-btn');
+const fileUpload = document.getElementById('file-upload');
+
+// بنتأكد إن الزراير موجودة في الصفحة عشان ميعملش Error
+if (uploadBtn && fileUpload) {
+    
+    // لما ندوس على المشبك، نفتح نافذة اختيار الملفات
+    uploadBtn.addEventListener('click', () => {
+        fileUpload.click();
+    });
+
+    // لما نختار ملف
+    fileUpload.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // لو المستخدم مش في وضع "مدرب التوظيف"، ننقله له أوتوماتيك
+        if (currentMode !== 'career') {
+            const careerBtn = document.querySelector('[data-mode="career"]');
+            if (careerBtn) careerBtn.click();
+        }
+
+        const chatBox = document.getElementById('chat-box');
+        
+       // نظهر رسالة إن الملف بيترفع
+chatBox.innerHTML += '<div class="msg user">جاري قراءة السيرة الذاتية: ' + file.name + ' ... ⏳</div>';
+chatBox.scrollTop = chatBox.scrollHeight;
+
+try {
+    // استخدام مكتبة pdf.js لاستخراج النص
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+    let fullText = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(" ");
+        fullText += pageText + "\n";
+    }
+
+    // نمسح رسالة التحميل
+    const oldLoadingMsg = 'جاري قراءة السيرة الذاتية: ' + file.name + ' ... ⏳';
+    const newLoadedMsg = 'تم قراءة السيرة الذاتية: ' + file.name + ' 📄';
+    chatBox.innerHTML = chatBox.innerHTML.replace(oldLoadingMsg, newLoadedMsg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // نجهز النص عشان نبعته للذكاء الاصطناعي
+    const userMessage = "أنا رفعت السيرة الذاتية بتاعتي، عايزك تحللها وتقولي إيه عيوبها وإزاي أطورها عشان ألاقي شغل. إليك النص: \n\n" + fullText;
+
+    // نستدعي دالة إرسال الرسالة بس بنص الـ CV
+    await sendCvToAI(userMessage, file.name);
+
+} catch (error) {
+    console.error("Error reading PDF:", error);
+    chatBox.innerHTML += '<div class="msg bot">معلش، مقدرتش أقرا الملف ده. تأكد إنه PDF سليم.</div>';
+}
+        
+        // تفريغ الملف عشان لو عايز يرفع تاني
+        fileUpload.value = '';
+    });
+}
+
+// دالة مخصصة لإرسال الـ CV للسيرفر
+async function sendCvToAI(cvText, fileName) {
+    const chatBox = document.getElementById('chat-box');
+    const typingIndicator = document.getElementById('typing-indicator');
+    
+    if (!currentChatId) {
+        const docRef = await db.collection('users').doc(currentUser.uid).collection('chats').add({
+            title: "تحليل CV: " + fileName,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        currentChatId = docRef.id;
+        loadMessages(currentChatId);
+    }
+
+    // نحفظ الرسالة في الداتابيز
+    db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).collection('messages').add({
+        text: "لقد قمت برفع سيرتي الذاتية لتحليلها.",
+        sender: 'user',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    typingIndicator.style.display = 'flex';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        var response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                message: cvText,
+                history: currentMessages,
+                mode: 'career' 
+            })
+        });
+        var data = await response.json();
+        
+        typingIndicator.style.display = 'none';
+        
+        // نحفظ الرد في الداتابيز
+        db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).collection('messages').add({
+            text: data.reply,
+            sender: 'bot',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        typingIndicator.style.display = 'none';
+        chatBox.innerHTML += '<div class="msg bot">معلش، السيرفر مش متاح دلوقتي.</div>';
+    }
+}
